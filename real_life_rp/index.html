@@ -1,23 +1,142 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Server Rules</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dylan RP Server Rules</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<pre id="rules">Loading...</pre>
+  <div class="page">
 
-<script>
-fetch('rules.txt')
-  .then(response => response.text())
-  .then(text => {
-    document.getElementById('rules').textContent = text;
-  })
-  .catch(error => {
-    document.getElementById('rules').textContent = 'Failed to load rules.';
-    console.error(error);
-  });
-</script>
+    <div class="header">
+      <h1>Dylan RP Server Rules</h1>
+      <p>Read the rules before joining.</p>
+    </div>
+
+    <div id="rules" class="rules-box">
+      Loading rules...
+    </div>
+
+  </div>
+
+  <script>
+    const RULES_FILE = "rules.txt";
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function parseCodes(text) {
+
+      let html = escapeHtml(text);
+
+      // Headings
+      html = html.replace(
+        /\[h1\](.*?)\[\/h1\]/gis,
+        "<h1>$1</h1>"
+      );
+
+      html = html.replace(
+        /\[h2\](.*?)\[\/h2\]/gis,
+        "<h2>$1</h2>"
+      );
+
+      // Bold
+      html = html.replace(
+        /\[b\](.*?)\[\/b\]/gis,
+        "<b>$1</b>"
+      );
+
+      // Italic
+      html = html.replace(
+        /\[i\](.*?)\[\/i\]/gis,
+        "<i>$1</i>"
+      );
+
+      // Underline
+      html = html.replace(
+        /\[u\](.*?)\[\/u\]/gis,
+        "<u>$1</u>"
+      );
+
+      // Center
+      html = html.replace(
+        /\[center\](.*?)\[\/center\]/gis,
+        '<div class="center">$1</div>'
+      );
+
+      // Color
+      html = html.replace(
+        /\[color=(.*?)\](.*?)\[\/color\]/gis,
+        '<span style="color:$1">$2</span>'
+      );
+
+      // Normal URL
+      html = html.replace(
+        /\[url\](.*?)\[\/url\]/gis,
+        '<a href="$1" target="_blank">$1</a>'
+      );
+
+      // URL with custom text
+      html = html.replace(
+        /\[url=(.*?)\](.*?)\[\/url\]/gis,
+        '<a href="$1" target="_blank">$2</a>'
+      );
+
+      // Images
+      html = html.replace(
+        /\[img\](.*?)\[\/img\]/gis,
+        '<img src="$1" class="rule-image" alt="Server image">'
+      );
+
+      // Code boxes
+      html = html.replace(
+        /\[code\]([\s\S]*?)\[\/code\]/gi,
+        "<pre><code>$1</code></pre>"
+      );
+
+      // New lines
+      html = html.replace(/\n/g, "<br>");
+
+      return html;
+    }
+
+    fetch(RULES_FILE)
+
+      .then(response => {
+
+        if (!response.ok) {
+          throw new Error("Could not load rules");
+        }
+
+        return response.text();
+
+      })
+
+      .then(text => {
+
+        document.getElementById("rules").innerHTML =
+          parseCodes(text);
+
+      })
+
+      .catch(error => {
+
+        document.getElementById("rules").innerHTML =
+          '<div class="error">Could not load rules.txt</div>';
+
+        console.error(error);
+
+      });
+
+  </script>
 
 </body>
 </html>
