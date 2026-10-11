@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Server Rules</title>
+</head>
+<body>
+
+<pre id="rules">Loading...</pre>
+
+<script>
+fetch('rules.txt')
+  .then(response => response.text())
+  .then(text => {
+    document.getElementById('rules').textContent = text;
+  })
+  .catch(error => {
+    document.getElementById('rules').textContent = 'Failed to load rules.';
+    console.error(error);
+  });
+</script>
+
+</body>
+</html>
